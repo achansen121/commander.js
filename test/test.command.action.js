@@ -11,4 +11,5 @@ program
 
 program.parse(['node', 'test', 'info']);
 
+program._last_fired_subcommand.should.equal("info")
 program.commands[0].color.should.equal(val);

@@ -86,6 +86,7 @@ function Command(name) {
   this._execs = {};
   this._allowUnknownOption = false;
   this._args = [];
+  this._last_fired_subcommand=false;
   this._name = name || '';
 }
 
@@ -258,7 +259,10 @@ Command.prototype.parseExpectedArgs = function(args) {
 
 Command.prototype.action = function(fn) {
   var self = this;
+  var parent = this.parent || this;
+  var name = parent === this ? '*' : this._name;
   var listener = function(args, unknown) {
+    parent._last_fired_subcommand=name;
     // Parse any so-far unknown options
     args = args || [];
     unknown = unknown || [];
@@ -301,8 +305,6 @@ Command.prototype.action = function(fn) {
 
     fn.apply(self, args);
   };
-  var parent = this.parent || this;
-  var name = parent === this ? '*' : this._name;
   parent.on(name, listener);
   if (this._alias) parent.on(this._alias, listener);
   return this;
